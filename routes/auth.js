@@ -13,7 +13,7 @@ const { authCheck, adminCheck } = require("../middlewares/auth.js")
 //controllers
 router.post('/create-or-update-user', authCheck, createOrUpdateUser)
 router.post('/current-user', authCheck, currentUser)
-router.post('/current-user', authCheck, adminCheck, currentUser)
+router.post('/current-admin', authCheck, adminCheck, currentUser)
 
 
 
