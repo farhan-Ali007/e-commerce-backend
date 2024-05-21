@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router()
 
 //import 
-const { create, read, update, remove, list } = require('../controllers/category.js');
+const { create, read, update, remove, list,getSubs } = require('../controllers/category.js');
 
 
 
@@ -16,6 +16,7 @@ router.get("/category/:slug", read)
 router.post("/category", authCheck, adminCheck, create)
 router.put("/category/:slug", authCheck, adminCheck, update)
 router.delete("/category/:slug", authCheck, adminCheck, remove)
+router.get("/category/subs/:_id", getSubs)
 
 
 
