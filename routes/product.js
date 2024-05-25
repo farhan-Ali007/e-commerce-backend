@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router()
 
 //import 
-const { create, read } = require('../controllers/product.js');
+const { create, listAll } = require('../controllers/product.js');
 
 
 
@@ -12,7 +12,7 @@ const { authCheck, adminCheck } = require("../middlewares/auth.js")
 
 //controllers
 router.post("/product", authCheck, adminCheck, create)
-router.get("/products", read)
+router.get("/products/:count", listAll)
 
 
 

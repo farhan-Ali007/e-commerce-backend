@@ -29,12 +29,25 @@ const create = async (req, res) => {
 }
 
 
-const read = async (req, res) => {
 
-    const products = await Product.find({})
+const listAll = async (req, res) => {
+    try {
+        const count = parseInt(req.params.count);
+        const products = await Product.find({})
+            .limit(count)
+            .populate('category')
+            .populate('subs')
+            .sort([['createdAt', "desc"]])
+            .exec();
 
-    res.json(products)
+        res.json(products);
+    } catch (error) {
+        console.error('Error listing products:', error);
+        res.status(500).json({ error: 'Failed to list products' });
+    }
+};
 
-}
+module.exports = { listAll };
 
-module.exports = { create, read };
+
+module.exports = { create, listAll };

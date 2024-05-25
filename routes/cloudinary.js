@@ -12,8 +12,8 @@ const { uploads, remove } = require('../controllers/cloudinary.js')
 
 //routes
 
-router.post("/uploadImages", authCheck, adminCheck, uploads)
-router.post("/removeImages", authCheck, adminCheck, remove)
+router.post("/uploadimages", authCheck, adminCheck, uploads)
+router.post("/removeimages", authCheck, adminCheck, remove)
 
 
 
