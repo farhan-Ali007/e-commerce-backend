@@ -47,7 +47,27 @@ const listAll = async (req, res) => {
     }
 };
 
-module.exports = { listAll };
+const remove = async (req, res) => {
+    try {
+        const deleted = await Product.findOneAndRemove({
+            slug: req.params.slug,
+        }).exec();
+        res.json(deleted);
+    } catch (err) {
+        console.log(err);
+        return res.staus(400).send("Product delete failed");
+    }
+}
+
+const read = async (req, res) => {
+    const product = await Product.findOne({ slug: req.params.slug })
+        .populate("category")
+        .populate("subs")
+        .exec()
+
+    res.json(product)
+}
 
 
-module.exports = { create, listAll };
+
+module.exports = { create, listAll, remove , read };
