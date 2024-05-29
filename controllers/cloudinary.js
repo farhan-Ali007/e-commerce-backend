@@ -10,8 +10,6 @@ cloudinary.config({
 });
 
 
-
-
 const uploads = async (req, res) => {
     try {
         let result = await cloudinary.uploader.upload(req.body.image, {
