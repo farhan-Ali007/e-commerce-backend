@@ -68,6 +68,29 @@ const read = async (req, res) => {
     res.json(product)
 }
 
+const update = async (req, res) => {
+    try {
+        if (req.body.title) {
+            req.body.slug = slugify(req.body.title)
+        }
+
+        const updated = await Product.findOneAndUpdate({ slug: req.params.slug },
+            req.body,
+            { new: true }
+        )
+            .exec();
+
+        res.json((updated))
+
+    } catch (err) {
+        console.log("Product update error ====>", err);
+        // return res.status(400).send("Product update failed")
+        res.status(400).json({
+            error: err.message
+        });
+    }
+}
 
 
-module.exports = { create, listAll, remove , read };
+
+module.exports = { create, listAll, remove, read, update };
