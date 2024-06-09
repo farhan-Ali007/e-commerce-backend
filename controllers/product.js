@@ -91,6 +91,65 @@ const update = async (req, res) => {
     }
 }
 
+// const list = async (req, res) => {
+//     try {
+//         //createdat/updatedAt , ascending order/descendind order
+//         const { sort, order, limit } = req.body;
+
+//         // console.log('Received sort:', sort);
+//         // console.log('Received order:', order);
+//         // console.log('Received limit:', limit);
 
 
-module.exports = { create, listAll, remove, read, update };
+//         const products = await Product.find({})
+//             .populate('category')
+//             .populate('subs')
+//             .sort([[sort, order]])
+//             .limit(limit)
+//             .exec()
+
+
+//         // console.log('Fetched products:', products);
+//         res.json(products)
+
+//     } catch (err) {
+//         console.log(err)
+//     }
+// }
+
+//With pagination
+
+
+
+const list = async (req, res) => {
+    try {
+        const { sort, order, page } = req.body;
+        const currentPage = page || 1;
+        const perPage = 3;
+
+        const products = await Product.find({})
+            .skip((currentPage - 1) * perPage)
+            .populate('category')
+            .populate('subs')
+            .sort([[sort, order]])
+            .limit(perPage)
+            .exec();
+
+        console.log('Fetched products:', products); // Debugging line
+        res.json(products);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const productsCount = async (req, res) => {
+
+    const total = await Product.find({}).estimatedDocumentCount().exec()
+
+    res.json(total)
+
+}
+
+
+
+module.exports = { create, listAll, remove, read, update, list, productsCount };
