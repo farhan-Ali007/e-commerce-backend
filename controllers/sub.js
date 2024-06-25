@@ -1,5 +1,6 @@
 const Sub = require("../models/sub.js");
 const slugify = require('slugify')
+const Product = require("../models/product.js")
 
 const create = async (req, res) => {
     try {
@@ -23,7 +24,13 @@ const read = async (req, res) => {
 
     const sub = await Sub.findOne({ slug: req.params.slug }).exec();
 
-    res.status(200).json(sub)
+    const product = await Product.find({ subs: sub })
+        .populate('category')
+        .exec()
+    res.status(200).json({
+        sub,
+        product
+    })
 }
 
 const update = async (req, res) => {

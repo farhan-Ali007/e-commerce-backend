@@ -185,5 +185,29 @@ const productStar = async (req, res) => {
     }
 };
 
+const listRelated = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.productId).exec();
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
 
-module.exports = { create, listAll, remove, read, update, list, productsCount, productStar };
+        const related = await Product.find({
+            _id: { $ne: product._id },
+            category: product.category
+        })
+            .limit(3)
+            .populate('category')
+            .populate('subs')
+            .populate('postedBy')
+            .exec();
+
+        res.json(related);
+    } catch (err) {
+        console.error('Error fetching related products:', err);
+        res.status(500).json({ error: 'Failed to fetch related products' });
+    }
+};
+
+
+module.exports = { create, listAll, remove, read, update, list, productsCount, productStar, listRelated };

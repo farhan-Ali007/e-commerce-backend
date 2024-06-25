@@ -1,4 +1,5 @@
 const Category = require("../models/category.js");
+const Product = require("../models/product.js");
 const Sub = require("../models/sub.js");
 const slugify = require('slugify')
 
@@ -23,7 +24,15 @@ const read = async (req, res) => {
 
     const category = await Category.findOne({ slug: req.params.slug }).exec();
 
-    res.status(200).json(category)
+    // res.status(200).json(category)
+    const product = await Product.find({ category })
+        .populate('category')
+        .exec()
+    res.status(200).json({
+        category,
+        product
+    })
+
 }
 
 const update = async (req, res) => {
@@ -65,4 +74,4 @@ const getSubs = (req, res) => {
     })
 }
 
-module.exports = { create, read, update, remove, list,getSubs }
+module.exports = { create, read, update, remove, list, getSubs }
