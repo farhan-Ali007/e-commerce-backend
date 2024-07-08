@@ -2,7 +2,16 @@ const express = require('express');
 const router = express.Router()
 
 //import 
-const { create, listAll, remove, read, update, list, productsCount, productStar, listRelated } = require('../controllers/product.js');
+const { create,
+    listAll,
+    remove,
+    read,
+    update,
+    list,
+    productsCount,
+    productStar,
+    listRelated,
+    searchFilters } = require('../controllers/product.js');
 
 
 
@@ -22,7 +31,9 @@ router.post("/products", list)
 //rating
 router.put("/product/star/:productId", authCheck, productStar)
 //related products
-router.get("/product/related/:productId",  listRelated)
+router.get("/product/related/:productId", listRelated)
+//Search products
+router.post('/search/filters', searchFilters)
 
 
 
