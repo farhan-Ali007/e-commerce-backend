@@ -60,17 +60,26 @@ const userCart = async (req, res) => {
 };
 
 const getUserCart = async (req, res) => {
-    const user = await User.findOne({ email: req.user.email }).exec()
+    try {
+        const user = await User.findOne({ email: req.user.email }).exec();
 
-    const cart = await Cart.findOne({ orderdBy: user._id })
-        .populate('products.product', '_id price  title totalAfterDiscount')
-        .exec()
+        const cart = await Cart.findOne({ orderdBy: user._id })
+            .populate('products.product', '_id price title')
+            .exec();
 
-    const { products, cartTotal, totalAfterDiscount } = cart;
+        if (!cart) {
+            return res.json({ products: [], cartTotal: 0, totalAfterDiscount: 0 });
+        }
 
-    res.json({ cartTotal, products, totalAfterDiscount })
+        const { products, cartTotal, totalAfterDiscount } = cart;
 
+        res.json({ cartTotal, products, totalAfterDiscount });
+    } catch (err) {
+        console.error("Error in getUserCart:", err);
+        res.status(500).json({ error: "An error occurred while retrieving the cart." });
+    }
 };
+
 
 const emptyCart = async (req, res) => {
     const user = await User.findOne({ email: req.user.email }).exec()
@@ -114,7 +123,7 @@ const applyCouponToUserCart = async (req, res) => {
 
     let totalAfterDiscount = (cartTotal - (cartTotal * validCoupon.discount) / 100).toFixed(2) // 45.4567456  = 45
 
-    Cart.findOneAndUpdate({ orderedBy: user._id }, { totalAfterDiscount }, { new: true });
+    Cart.findOneAndUpdate({ orderdBy: user._id }, { totalAfterDiscount }, { new: true }).exec();
 
     res.json(totalAfterDiscount)
 
