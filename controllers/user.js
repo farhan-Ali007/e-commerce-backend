@@ -2,6 +2,7 @@ const User = require('../models/user.js')
 const Product = require('../models/product.js')
 const Cart = require('../models/cart.js');
 const Coupon = require('../models/coupon.js')
+const Order = require('../models/order.js')
 
 
 const userCart = async (req, res) => {
@@ -80,7 +81,6 @@ const getUserCart = async (req, res) => {
     }
 };
 
-
 const emptyCart = async (req, res) => {
     const user = await User.findOne({ email: req.user.email }).exec()
     const cart = await Cart.findOneAndRemove({ orderdBy: user._id }).exec()
@@ -129,11 +129,56 @@ const applyCouponToUserCart = async (req, res) => {
 
 }
 
+const createOrder = async (req, res) => {
+
+    const { paymentIntent } = req.body.stripeResponse;
+    const user = await User.findOne({ email: req.user.email }).exec();
+
+    let { products } = await Cart.findOne({ orderdBy: user._id }).exec();
+
+
+    let newOrder = await new Order({
+        products,
+        paymentIntent,
+        orderdBy: user._id
+    }).save();
+
+    //increment sold and decrement quantity
+    //using a mongodb method called bulkwrite method
+
+    let bulkOptions = products.map((item) => {
+        return {
+            updateOne: {
+                filter: { _id: item.product._id },    //important item.product._id (each item is an array that has multiple products )
+                update: { $inc: { quantity: -item.count, sold: +item.count } }
+            }
+        }
+    })
+    let updated = await Product.bulkWrite(bulkOptions, {})
+    console.log("Updated (quantity-- and sold++)=====>", updated)
+
+    console.log("New Order saved ====>", newOrder)
+    res.json({ ok: true })
+
+}
+
+const orders = async (req, res) => {
+    const user = await User.findOne({ email: req.user.email }).exec()
+
+    let userOrders = await Order.find({ orderdBy: user._id })
+        .populate("products.product")
+        .exec()
+
+    res.json(userOrders)
+}
+
 
 module.exports = {
     userCart,
     getUserCart,
     emptyCart,
     saveAddress,
-    applyCouponToUserCart
+    applyCouponToUserCart,
+    createOrder,
+    orders
 }
