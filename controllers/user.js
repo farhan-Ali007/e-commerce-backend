@@ -172,6 +172,40 @@ const orders = async (req, res) => {
     res.json(userOrders)
 }
 
+const addToWishlist = async (req, res) => {
+
+    const { productId } = req.body;
+
+    const user = await User.findOneAndUpdate(
+        { email: req.user.email },
+        { $addToSet: { wishlist: productId } },
+        { new: true }
+    ).exec()
+    res.json({ ok: true })
+
+}
+
+const wishlist = async (req, res) => {
+
+    const list = await User.findOne({ email: req.user.email })
+        .select('wishlist')
+        .populate('wishlist')
+        .exec()
+
+    res.json(list)
+
+}
+const removeFromWishlist = async (req, res) => {
+
+    const { productId } = req.params;
+
+    const user = await User.findOneAndUpdate(
+        { email: req.user.email },
+        { $pull: { wishlist: productId } },)
+        .exec()
+
+    res.json({ ok: true })
+}
 
 module.exports = {
     userCart,
@@ -180,5 +214,8 @@ module.exports = {
     saveAddress,
     applyCouponToUserCart,
     createOrder,
-    orders
+    orders,
+    addToWishlist,
+    wishlist,
+    removeFromWishlist
 }
