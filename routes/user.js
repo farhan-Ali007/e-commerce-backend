@@ -10,7 +10,8 @@ const {
     orders,
     addToWishlist,
     wishlist,
-    removeFromWishlist
+    removeFromWishlist,
+    createCashOrder
 } = require('../controllers/user.js');
 
 
@@ -21,12 +22,11 @@ router.post("/user/cart", authCheck, userCart) //save cart
 router.get("/user/cart", authCheck, getUserCart) // get user cart
 router.delete("/user/cart", authCheck, emptyCart) // empty cart
 router.post("/user/address", authCheck, saveAddress) // Save address
-
-
-router.post("/user/cart/coupon", authCheck, applyCouponToUserCart) // Save address
+router.post("/user/cart/coupon", authCheck, applyCouponToUserCart) // apply coupon to cart
 //order section
 
 router.post("/user/order", authCheck, createOrder)
+router.post("/user/cash-order", authCheck, createCashOrder)  //cash on delivery
 router.get("/user/orders", authCheck, orders)
 
 //wishlist 

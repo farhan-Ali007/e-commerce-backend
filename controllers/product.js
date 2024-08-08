@@ -91,36 +91,7 @@ const update = async (req, res) => {
         });
     }
 }
-
-// const list = async (req, res) => {
-//     try {
-//         //createdat/updatedAt , ascending order/descendind order
-//         const { sort, order, limit } = req.body;
-
-//         // console.log('Received sort:', sort);
-//         // console.log('Received order:', order);
-//         // console.log('Received limit:', limit);
-
-
-//         const products = await Product.find({})
-//             .populate('category')
-//             .populate('subs')
-//             .sort([[sort, order]])
-//             .limit(limit)
-//             .exec()
-
-
-//         // console.log('Fetched products:', products);
-//         res.json(products)
-
-//     } catch (err) {
-//         console.log(err)
-//     }
-// }
-
 //With pagination
-
-
 const list = async (req, res) => {
     try {
         const { sort, order, page } = req.body;
@@ -135,7 +106,7 @@ const list = async (req, res) => {
             .limit(perPage)
             .exec();
 
-        console.log('Fetched products:', products); // Debugging line
+        // console.log('Fetched products:', products); // Debugging line
         res.json(products);
     } catch (err) {
         console.log(err);
